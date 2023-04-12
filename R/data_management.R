@@ -26,7 +26,11 @@ calculate_dem_margin <- function(df,
 get_elections <- function(fn = config$data$elections$fn,
                           raw = config$paths$raw,
                           proc = config$paths$proc) {
-  read_elections(fn = fn, raw = raw) |>
+  df <- read_elections(fn = fn, raw = raw) |>
     apply_filters() |>
     calculate_dem_margin()
+  
+  readr::write_csv(df, paste0(proc, fn))
+  
+  df
 }
