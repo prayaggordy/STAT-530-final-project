@@ -1,0 +1,8 @@
+paths:
+  raw: "data/raw/"
+  proc: "data/proc/"
+
+data:
+  elections:
+    fn: "1976-2020-house.csv"
+    democrat: ["DEMOCRAT", "DEMOCRATIC-FARM-LABOR", "DEMOCRATIC-FARMER-LABOR", "DEMOCRATIC-NPL"]
