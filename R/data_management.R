@@ -2,9 +2,10 @@ read_elections <- function(fn, raw) {
   readr::read_csv(paste0(raw, fn))
 }
 
-apply_filters <- function(df) {
+apply_filters <- function(df,
+                          filters = config$data$elections$filters) {
   df |>
-    dplyr::filter(!special, !runoff, !unofficial, !fusion_ticket)
+    dplyr::filter(dplyr::if_all(dplyr::all_of(filters), ~ !dplyr::coalesce(., FALSE)))
 }
 
 calculate_dem_margin <- function(df,
@@ -20,7 +21,8 @@ calculate_dem_margin <- function(df,
     dplyr::summarize(share = max(share)) |>
     dplyr::ungroup() |>
     tidyr::pivot_wider(names_from = democrat, values_from = share) |>
-    dplyr::mutate(dem_margin = democrat - highest_other)
+    dplyr::mutate(dplyr::across(c(democrat, highest_other), ~ tidyr::replace_na(., 0)),
+                  dem_margin = democrat - highest_other)
 }
 
 get_elections <- function(fn = config$data$elections$fn,
