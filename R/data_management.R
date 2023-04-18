@@ -5,7 +5,8 @@ read_elections <- function(fn, raw) {
 apply_filters <- function(df,
                           filters = config$data$elections$filters) {
   df |>
-    dplyr::filter(dplyr::if_all(dplyr::all_of(filters), ~ !dplyr::coalesce(., FALSE)))
+    dplyr::filter(dplyr::if_all(dplyr::all_of(filters), ~ !dplyr::coalesce(., FALSE)),
+                  stage == "GEN")
 }
 
 calculate_dem_margin <- function(df,
