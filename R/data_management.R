@@ -29,9 +29,18 @@ calculate_dem_margin <- function(df,
 get_elections <- function(fn = config$data$elections$fn,
                           raw = config$paths$raw,
                           proc = config$paths$proc) {
-  df <- read_elections(fn = fn, raw = raw) |>
+  df_raw <- read_elections(fn = fn, raw = raw)
+  
+  df <- df_raw |>
     apply_filters() |>
-    calculate_dem_margin()
+    calculate_dem_margin() |>
+    dplyr::left_join(
+      df_raw |>
+        dplyr::mutate(full_district = paste(state_po, district)) |>
+        dplyr::group_by(year, full_district) |>
+        dplyr::summarize(totalvotes = max(totalvotes)),
+      by = c("year", "full_district")
+    )
   
   readr::write_csv(df, paste0(proc, fn))
   
