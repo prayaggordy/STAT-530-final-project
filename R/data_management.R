@@ -6,7 +6,8 @@ apply_filters <- function(df,
                           filters = config$data$elections$filters) {
   df |>
     dplyr::filter(dplyr::if_all(dplyr::all_of(filters), ~ !dplyr::coalesce(., FALSE)),
-                  stage == "GEN")
+                  stage == "GEN",
+                  totalvotes > 1)
 }
 
 calculate_dem_margin <- function(df,
