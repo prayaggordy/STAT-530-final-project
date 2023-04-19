@@ -5,6 +5,6 @@ paths:
 data:
   elections:
     fn: "1976-2020-house.csv"
-    democrat: ["DEMOCRAT", "DEMOCRATIC-FARM-LABOR", "DEMOCRATIC-FARMER-LABOR", "DEMOCRATIC-NPL"]
+    democrat: ["DEMOCRAT", "DEMOCRATIC-FARM-LABOR", "DEMOCRATIC-FARMER-LABOR", "DEMOCRATIC-NPL", "DEMOCRATIC-NONPARTISAN LEAGUE"]
     republican: ["REPUBLICAN"]
     filters: ["special", "runoff", "unofficial", "fusion_ticket"]
