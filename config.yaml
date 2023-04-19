@@ -6,4 +6,5 @@ data:
   elections:
     fn: "1976-2020-house.csv"
     democrat: ["DEMOCRAT", "DEMOCRATIC-FARM-LABOR", "DEMOCRATIC-FARMER-LABOR", "DEMOCRATIC-NPL"]
+    republican: ["REPUBLICAN"]
     filters: ["special", "runoff", "unofficial", "fusion_ticket"]
