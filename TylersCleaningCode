@@ -1,0 +1,21 @@
+library(dplyr)
+library(rdrobust)
+library(rdd)
+
+data_original <- read.csv("/Users/tylerbagwell/Desktop/1976-2020-houseV11.csv")
+View(data_original)
+dim(data_original)
+
+data <- data_original %>%
+  group_by(year, state, district) %>%
+  top_n(2, candidatevotes) %>%
+  mutate(vote_share = candidatevotes / totalvotes) %>%
+  reframe(vote_margin = vote_share[party=="DEMOCRAT"] - vote_share[party!="DEMOCRAT"])
+
+dim(data)
+View(data)
+
+hist(data$vote_margin)
+DCdensity(data$vote_margin, c=0)
+
+
