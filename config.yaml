@@ -8,3 +8,4 @@ data:
     democrat: ["DEMOCRAT", "DEMOCRATIC-FARM-LABOR", "DEMOCRATIC-FARMER-LABOR", "DEMOCRATIC-NPL", "DEMOCRATIC-NONPARTISAN LEAGUE"]
     republican: ["REPUBLICAN"]
     filters: ["special", "runoff", "unofficial", "fusion_ticket"]
+    remove_remainder: 2
