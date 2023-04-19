@@ -11,7 +11,9 @@ apply_filters <- function(df,
 }
 
 calculate_dem_margin <- function(df,
-                                 democrats = config$data$elections$democrat) {
+                                 democrats = paste0("^",
+                                                    config$data$elections$democrat,
+                                                    "$")) {
   df |>
     dplyr::mutate(full_district = paste(state_po, district),
                   share = candidatevotes/totalvotes,
