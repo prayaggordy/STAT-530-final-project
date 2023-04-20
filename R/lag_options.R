@@ -1,6 +1,5 @@
-lu_repeated_candidate <- function(df, party) {
-  rlang::arg_match(party, c("democrat", "highest_other"))
-  party_col <- paste("candidate", party, sep = "_")
+lu_repeated_candidate <- function(df, dem) {
+  party_col <- paste("candidate", ifelse(dem, "democrat", "highest_other"), sep = "_")
   
   df |>
     dplyr::group_by(full_district) |>
@@ -10,8 +9,7 @@ lu_repeated_candidate <- function(df, party) {
     dplyr::select(full_district, year)
 }
 
-lag_simple <- function(df,
-                       demos = DF_DEMOS) {
+lag_simple <- function(df) {
   df |>
     dplyr::select(year, full_district, dem_margin) |>
     dplyr::inner_join(
@@ -30,7 +28,15 @@ lag_any_candidates <- function(df,
 
 lag_same_dem <- function(df,
                          demos = DF_DEMOS) {
-  concurrent_dems <- lu_candidates(df) |>
-    dplyr::group_by(full_district)
-    
+  lag_simple(df) |>
+    dplyr::inner_join(lu_repeated_candidate(df, dem = T)) |>
+    dplyr::left_join(demos, by = c("year", "full_district"))
+}
+
+lag_same_dem_same_rep <- function(df,
+                                  demos = DF_DEMOS) {
+  lag_simple(df) |>
+    dplyr::inner_join(lu_repeated_candidate(df, dem = T)) |>
+    dplyr::inner_join(lu_repeated_candidate(df, dem = F)) |>
+    dplyr::left_join(demos, by = c("year", "full_district"))
 }
