@@ -25,11 +25,11 @@ header-includes:
 
 ## Regression Discontinuity Design
 
-**Introduction**: regression discontinuity design (RDD) is a quasi-experimental pretest-posttest design that aims to determine the causal effects of interventions by assigning a cutoff or threshold above or below which an intervention is assigned. 
+**Introduction**: Regression discontinuity design (RDD) is a quasi-experimental pretest-posttest design that aims to determine the causal effects of interventions by assigning a cutoff or threshold above or below which an intervention is assigned. 
 
 ## Regression Discontinuity Design
 
-**Goal**: Try to estimate the causal effect of intervention/treatment, $\tau(W=w_0)$, at $W=w_0$ on $Y$ with covariate $X$.
+**Goal**: Try to estimate the causal effect of intervention/treatment, $\tau(W=w_0)$, at $W=w_0$ on $Y$ with (unobserved/observed) covariate $X$, where individual assignment is determined by value of $W_i$ through $D_i=1\{W_i\ge w_0\}$.
 
 ```{r echo=FALSE, fig.show='asis', fig.width=4.50, fig.height=3.0, fig.align='center', cache=TRUE}
 N <- 10000
@@ -131,7 +131,7 @@ legend("topleft", legend=c("Obs. w/ treatment", "Obs. w/o treatment", "Counterfa
 
 ## Regression Discontinuity Design
 
-We can test for validity of the continuity assumption using our observed data:
+We empirically can test for validity of the continuity assumption using our observed data:
 
   * Lack of discontinuity in desnity of assignment variable $W$ at threshold $W=w_0$ (McCrary density test).
   * Lack of discontinuity in pretreatment covariates conditional density $X|W$ at the threshold $W=w_0$ then represents empirical evidence for the continuity of expected potential outcomes so long as we test all relevant pretreatment covariates, i.e., $f(X=x|W=w)$ must be continuous in $w$ at $w=w_0$ for all $x \in X$. (Regress X on W at threshold.)
@@ -323,7 +323,9 @@ The estimator for the casual estimated at the assignment threshold $W=w_0$ is de
 $$ \hat{\tau}_{\text{LLR}}(Y;W,K,b) = \hat{\alpha}_1 - \hat{\alpha}_0$$
 $$ (\hat{\alpha_0},\hat{\beta_0}) = \operatorname*{arg\,min}_{\alpha_0,\beta_0} \sum_{i=1}^n 1\{w_l < W_i < w_0\}\{Y_i-\alpha_0-\beta_0(W_i-w_0)\}^2K(\cdot)$$
 $$(\hat{\alpha_1},\hat{\beta_1}) = \operatorname*{arg\,min}_{\alpha_1,\beta_1} \sum_{i=1}^n 1 \{w_0 < W_i < w_u\}\{Y_i-\alpha_1-\beta_1(W_i-w_0)\}^2K(\cdot)$$
-where $K(\cdot)$ is the weighting or kernel function and $b$ is the choice of bandwidth that controls the weighting scheme in this local linear regression.
+where $K(\cdot)$ is the weighting or kernel function and $b$ is the choice of bandwidth that controls the weighting scheme in this local linear regression. 
+
+We use the Imbens-Kalyanaraman optimal bandwidth formula to calculate the optimal bandwidths used in our local regression estimation.
 
 
 ## Presentation Outline
@@ -358,16 +360,18 @@ Data Sources: Harvard Dataverse and MIT Election Data + Science Lab
 
 Observed variables and covariates after data wrangling:
 
-| Data Set 1           | Data Set 2   |
-| -------------------- | ------------ |
-| Year                 | Year         |
-| State                | State        |
-| District             | District     |
-| **Dem. Vote Margin** | Unemployment | 
-| Candidate            | Race         |
-|                      | Education    |
+| Data Set 1           | Data Set 2    |
+| -------------------- | ------------- |
+| Year                 | Year          |
+| State                | State         |
+| District             | District      |
+| **Dem.* Vote Margin** | Unemployment | 
+| Candidate            | Race          |
+|                      | Education     |
 
 **Dem. Vote Margin** = (Dem. Vote Share) - (Greatest Non-Dem. Vote Share) 
+
+*Dem. = Democrat (Party)
 
 
 ## RRD Applied to US Congressional Elections: The Setup
@@ -381,4 +385,18 @@ Observed variables and covariates after data wrangling:
   * **RDD Applied to US Congressional Elections: Results**
   * RDD Applied to US Congressional Elections: Conclusions
 
+
+
+
+
+
+## Sources:
+
+  1. Lee, David S.; Randomized experiments from non-random selection in U.S. House elections, Journal of Econometrics 142 (2008) 675–697
+  2. de la Cuesta, Brandon and Imai, Kosuke; Misunderstandings About the Regression Discontinuity Design in the Study of Close Elections, Annu. Rev. Polit. Sci. 2016. 19:375–96
+  3. Calonico et al.; Regression Discontinuity Designs Using Covariates; The Review of Economics and Statistics, 2019, 101(3): 442–451
+  4. McCrary, Justin; Manipulation of the running variable in the regression discontinuity design: A density test; Journal of Econometrics 142 (2008) 698–714
+
+
+## Audience Discussion and Questions
 
