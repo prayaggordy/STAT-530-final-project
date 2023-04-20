@@ -29,6 +29,10 @@ plot_rdd <- function(d, fn_full,
   
   ggsave(paste0(fn_full, "_late_", late, ".jpeg"), p)
   
+  jpeg(paste0(fn_full, "_late_", late, "_BASE.jpeg"), width = 1000, height = 1000)
+  plot(rdd::RDestimate(dem_margin ~ prev_dem_margin, d))
+  dev.off()
+  
   NULL
 }
 
