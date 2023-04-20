@@ -49,6 +49,13 @@ lag_same_dem_diff_rep <- function(df,
     dplyr::left_join(demos, by = c("year", "full_district"))
 }
 
+lag_same_rep <- function(df,
+                         demos = DF_DEMOS) {
+  lag_simple(df) |>
+    dplyr::inner_join(lu_repeated_candidate(df, dem = F)) |>
+    dplyr::left_join(demos, by = c("year", "full_district"))
+}
+
 lag_diff_dem_same_rep <- function(df,
                                   demos = DF_DEMOS) {
   lag_simple(df) |>
@@ -60,7 +67,7 @@ lag_diff_dem_same_rep <- function(df,
 lag_diff_dem_diff_rep <- function(df,
                                   demos = DF_DEMOS) {
   lag_simple(df) |>
-    dplyr::anti_join(lu_repeated_candidate(df, dem = T)) |>
+    dplyr::anti_join(lu_repeated_candidate(df, dem = F)) |>
     dplyr::anti_join(lu_repeated_candidate(df, dem = F)) |>
     dplyr::left_join(demos, by = c("year", "full_district"))
 }
