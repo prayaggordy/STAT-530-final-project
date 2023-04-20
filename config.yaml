@@ -1,6 +1,7 @@
 paths:
   raw: "data/raw/"
   proc: "data/proc/"
+  figures: "output/figures/"
 
 data:
   elections:

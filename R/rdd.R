@@ -1,6 +1,6 @@
 plot_density <- function(d, fn_full, dig = 3) {
   mccrary_p <- rdd::DCdensity(d$prev_dem_margin)
-  jpeg(paste0(f, "_mccrary_p_", round(mccrary_p, dig), ".jpeg"), width = 350, height = 350)
+  jpeg(paste0(fn_full, "_mccrary_p_", round(mccrary_p, dig), ".jpeg"), width = 350, height = 350)
   rdd::DCdensity(d$prev_dem_margin)
   dev.off()
   
@@ -29,13 +29,13 @@ plot_rdd <- function(d, fn_full,
 
 simple_rdd <- function(df,
                        lags = config$analysis$lag_fns,
-                       proc = config$paths$proc) {
+                       figs = config$paths$figures) {
   purrr::walk(
     lags,
     function(f) {
       d <- rlang::exec(f, df)
-      plot_density(d, paste0(proc, f))
-      
+      plot_density(d, paste0(figs, f))
+      # plot_rdd(d, paste0(figs, f))
     }
   )
   
