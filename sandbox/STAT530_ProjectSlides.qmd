@@ -341,15 +341,7 @@ Project Motivations:
   * One of the most striking facts of congressional politics in the United States is the consistently high rate of electoral success of incumbents, and the electoral advantage of incumbency is one of the most studied aspects of research on elections to the U.S. House (Gelman and King, 1990).
   * The overwhelming success of House incumbents draws public attention whenever concerns arise that Representatives are using the privileges and resources of office to gain an ‘‘unfair’’ advantage over potential challengers.
   * Def'n: The **incumbent** is the current holder of an office or position, usually in relation to an election.
-  
-## RRD Applied to US Congressional Elections: The Setup
 
-Data Sources: Harvard Dataverse and MIT Election Data + Science Lab
-
-  * U.S. House 1976–2020 Elections
-      * MIT Election Data and Science Lab, 2017, "U.S. House 1976–2020"
-  * Historical Congressional Legislation and District Demographics 1972-2014
-      * Foster-Molina, Ella, 2017, "Historical Congressional Legislation and District Demographics 1972-2014"
       
 ## RRD Applied to US Congressional Elections: The Setup
 
