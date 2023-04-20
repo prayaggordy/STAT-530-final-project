@@ -13,16 +13,21 @@ plot_rdd <- function(d, fn_full,
   
   p <- d |>
     dplyr::mutate(prev_winner = ifelse(prev_dem_margin > 0, "Democrat", "Other")) |>
-    ggplot(d, aes(x = prev_dem_margin, y = dem_margin, color = prev_winner, group = prev_winner)) +
-    geom_point() +
-    geom_smooth() +
+    ggplot(aes(x = prev_dem_margin, y = dem_margin, color = prev_winner, group = prev_winner)) +
+    geom_point(size = 0.5, alpha = 0.25) +
+    geom_smooth(size = 2, alpha = 0.75) +
     labs(x = "Previous Democratic margin", 
          y = "Democratic margin",
          color = "Previous winner",
-         caption = paste0("LATE =", late)) +
-    theme_minimal()
+         caption = paste("LATE =", late)) +
+    theme_minimal() +
+    scale_color_manual(values = c("Democrat" = cols$dem, "Other" = cols$rep)) +
+    scale_x_continuous(limits = c(-1, 1), breaks = seq(-1, 1, by = 0.25)) +
+    scale_y_continuous(limits = c(-1, 1), breaks = seq(-1, 1, by = 0.25)) +
+    geom_hline(yintercept = 0) +
+    geom_vline(xintercept = 0)
   
-  ggsave(paste0(fn_full), "_late_", late, ".jpeg")
+  ggsave(paste0(fn_full, "_late_", late, ".jpeg"), p)
   
   NULL
 }
@@ -35,9 +40,9 @@ simple_rdd <- function(df,
     function(f) {
       d <- rlang::exec(f, df)
       plot_density(d, paste0(figs, f))
-      # plot_rdd(d, paste0(figs, f))
+      plot_rdd(d, paste0(figs, f))
     }
   )
   
-  return()
+  NULL
 }
