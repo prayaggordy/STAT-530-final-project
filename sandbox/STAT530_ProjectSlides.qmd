@@ -19,7 +19,7 @@ header-includes:
 ## Presentation Outline
 
   * Introduction to Regression Discontinuity Design
-  * RDD Applied to US Congressional Elections: The Setup
+  * **RDD Applied to US Congressional Elections: The Setup**
   * RDD Applied to US Congressional Elections: Results
   * RDD Applied to US Congressional Elections: Conclusions
 
