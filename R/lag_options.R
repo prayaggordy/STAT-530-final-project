@@ -1,3 +1,15 @@
+lu_repeated_candidate <- function(df, party) {
+  rlang::arg_match(party, c("democrat", "highest_other"))
+  party_col <- paste("candidate", party, sep = "_")
+  
+  df |>
+    dplyr::group_by(full_district) |>
+    dplyr::filter(dplyr::if_all(.cols = dplyr::all_of(party_col),
+                                .fns = ~ . == dplyr::lag(.))) |>
+    dplyr::ungroup() |>
+    dplyr::select(full_district, year)
+}
+
 lag_simple <- function(df,
                        demos = DF_DEMOS) {
   df |>
@@ -18,5 +30,7 @@ lag_any_candidates <- function(df,
 
 lag_same_dem <- function(df,
                          demos = DF_DEMOS) {
-  
+  concurrent_dems <- lu_candidates(df) |>
+    dplyr::group_by(full_district)
+    
 }
