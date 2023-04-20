@@ -30,33 +30,19 @@ get_demos <- function(fn = config$data$demographics$fn,
     filter_demos()
 }
 
-test_demos <- function(df) {
-  d <- lag_any_candidates(df) |>
-    dplyr::select(year, full_district, prev_dem_margin, white = prcntWhiteAll, educ = prcntBA, unemp = prcntUnemp) |>
-    tidyr::pivot_longer(cols = c(white, educ, unemp),
+test_demos <- function(df, cols = config$analysis$colors) {
+  lag_any_candidates(df) |>
+    dplyr::select(year, full_district, prev_dem_margin, white = prcntWhiteAll, 
+                  income = meanIncome, unemp = prcntUnemp) |>
+    tidyr::pivot_longer(cols = c(white, income, unemp),
                         names_to = "demo") |>
     dplyr::filter(!is.na(value)) |>
-    dplyr::mutate(winner = ifelse(prev_dem_margin > 0, "dem", "other"))
-  
-  vals <- purrr::map_dfr(
-    seq(0.01, 0.15, by = 0.01),
-    function(bw) {
-      d |>
-        dplyr::filter(prev_dem_margin >= -bw,
-                      prev_dem_margin <= bw) |>
-        dplyr::group_by(demo, winner) |>
-        dplyr::summarize(value = mean(value),
-                         district_year_obs = dplyr::n()) |>
-        dplyr::ungroup() |>
-        dplyr::mutate(bandwidth = bw)
-    }
-  )
-  
-  lines <- ggplot(vals, aes(x = bandwidth, y = value, color = winner)) +
-    geom_line() + 
-    facet_wrap(~ demo, ncol = 1, scales = "free_y")
-  
-  ggplot(d, aes(x = prev_dem_margin, y = value, color = winner)) +
+    dplyr::mutate(Winner = ifelse(prev_dem_margin > 0, "Democrat", "Other")) |>
+    ggplot(aes(x = prev_dem_margin, y = value, color = Winner)) +
     geom_point() +
-    facet_wrap(~ demo, ncol = 1, scales = "free_y")
+    facet_wrap(~ demo, ncol = 1, scales = "free_y") +
+    theme_minimal() + 
+    scale_color_manual(values = c("Democrat" = cols$dem, "Other" = cols$rep)) +
+    labs(x = "Previous Democratic margin",
+         y = "Covariate value")
 }
