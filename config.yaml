@@ -9,3 +9,6 @@ data:
     republican: ["REPUBLICAN"]
     filters: ["special", "runoff", "unofficial", "fusion_ticket"]
     remove_remainder: 2
+  demographics:
+    fn: "allCongressDataPublishV2.csv"
+    first_year: 1972

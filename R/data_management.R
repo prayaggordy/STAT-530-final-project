@@ -51,3 +51,8 @@ get_elections <- function(fn = config$data$elections$fn,
   
   df
 }
+
+lu_obs <- function(df) {
+  df |>
+    dplyr::distinct(year, full_district)
+}
