@@ -15,9 +15,11 @@ data:
     first_year: 1972
 
 analysis:
-  lag_fns: [lag_any_candidates, 
-            lag_same_dem, lag_diff_dem, lag_same_dem_same_rep, lag_same_dem_diff_rep,
-            lag_same_rep, lag_diff_rep, lag_diff_dem_same_rep, lag_diff_dem_diff_rep]
+  subgroups: [lag_any_candidates, 
+              lag_same_dem, lag_diff_dem, lag_same_dem_same_rep, lag_same_dem_diff_rep,
+              lag_same_rep, lag_diff_rep, lag_diff_dem_same_rep, lag_diff_dem_diff_rep,
+              lag_white_dem, lag_white_dem_white_rep, lag_white_dem_nonwhite_rep,
+              lag_nonwhite_dem, lag_nonwhite_dem_white_rep, lag_nonwhite_dem_nonwhite_rep]
   colors:
     dem: "#00AEF3"
     rep: "#DE0100"

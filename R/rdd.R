@@ -37,10 +37,10 @@ plot_rdd <- function(d, fn_full,
 }
 
 simple_rdd <- function(df,
-                       lags = config$analysis$lag_fns,
+                       subgroups = config$analysis$subgroups,
                        figs = config$paths$figures) {
   purrr::walk(
-    lags,
+    subgroups,
     function(f) {
       d <- rlang::exec(f, df)
       plot_density(d, paste0(figs, f))

@@ -11,7 +11,6 @@ lu_repeated_candidate <- function(df, dem) {
 
 lag_simple <- function(df) {
   df |>
-    dplyr::select(year, full_district, dem_margin, candidate_democrat, candidate_highest_other) |>
     dplyr::inner_join(
       df |>
         dplyr::mutate(next_election = year + 2) |>
