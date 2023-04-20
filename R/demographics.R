@@ -14,9 +14,18 @@ clean_district <- function(df,
     dplyr::relocate(full_district, year, .before = 1)
 }
 
+filter_demos <- function(df) {
+  df |>
+    dplyr::filter(!is.na(full_district), !is.na(year)) |>
+    dplyr::group_by(full_district, year) |>
+    dplyr::slice(1) |>
+    dplyr::ungroup()
+}
+
 get_demos <- function(fn = config$data$demographics$fn,
                       raw = config$paths$raw,
                       proc = config$paths$proc) {
   read_demos(fn = fn, raw = raw) |>
-    clean_district()
+    clean_district() |>
+    filter_demos()
 }

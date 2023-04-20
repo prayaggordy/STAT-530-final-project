@@ -2,3 +2,4 @@ config <- yaml::read_yaml("config.yaml")
 purrr::walk(list.files(path = "R", pattern = "*.R", full.names = T), source)
 
 DF <- get_elections()
+DF_DEMOS <- get_demos()
