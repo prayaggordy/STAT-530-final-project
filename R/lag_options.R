@@ -4,7 +4,7 @@ remove_redistricting <- function(df,
     dplyr::filter(year %% 10 != remainder)
 }
 
-simple_lag <- function(df,
+lag_simple <- function(df,
                        demos = DF_DEMOS) {
   d <- df |>
     remove_redistricting()
@@ -19,3 +19,5 @@ simple_lag <- function(df,
     ) |>
     dplyr::left_join(demos, by = c("year", "full_district"))
 }
+
+
