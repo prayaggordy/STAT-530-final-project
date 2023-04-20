@@ -12,3 +12,13 @@ data:
   demographics:
     fn: "allCongressDataPublishV2.csv"
     first_year: 1972
+
+analysis:
+  lag_fns:
+    any_cand: lag_any_candidates
+    same_dem: lag_same_dem
+    same_same: lag_same_dem_same_rep
+    same_diff: lag_same_dem_diff_rep
+    same_rep: lag_same_rep
+    diff_same: lag_diff_dem_same_rep
+    diff_diff: lag_diff_dem_diff_rep
