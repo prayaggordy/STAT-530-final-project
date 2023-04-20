@@ -12,16 +12,16 @@ header-includes:
 ## Presentation Outline
 
   * Introduction to Regression Discontinuity Design
-  * RRD Applied to US Congressional Elections: The Setup
-  * [ADD LATER]
-  * [ADD LATER]
+  * RDD Applied to US Congressional Elections: The Setup
+  * RDD Applied to US Congressional Elections: Results
+  * RDD Applied to US Congressional Elections: Conclusions
   
 ## Presentation Outline
 
-  * **Introduction to Regression Discontinuity Design**
-  * RRD Applied to US Congressional Elections: The Setup
-  * [ADD LATER]
-  * [ADD LATER]
+  * Introduction to Regression Discontinuity Design
+  * RDD Applied to US Congressional Elections: The Setup
+  * RDD Applied to US Congressional Elections: Results
+  * RDD Applied to US Congressional Elections: Conclusions
 
 ## Regression Discontinuity Design
 
@@ -329,9 +329,9 @@ where $K(\cdot)$ is the weighting or kernel function and $b$ is the choice of ba
 ## Presentation Outline
 
   * Introduction to Regression Discontinuity Design
-  * **RRD Applied to US Congressional Elections: The Setup**
-  * [ADD LATER]
-  * [ADD LATER]
+  * **RDD Applied to US Congressional Elections: The Setup**
+  * RDD Applied to US Congressional Elections: Results
+  * RDD Applied to US Congressional Elections: Conclusions
   
 
 ## RRD Applied to US Congressional Elections: The Setup
@@ -374,6 +374,11 @@ Observed variables and covariates after data wrangling:
 
 ![2022 Congressional Districts and Partisan Lean](CongressionalDistrictsImage.png){width=3.5in  fig-align="center"}
 
+## Presentation Outline
 
+  * Introduction to Regression Discontinuity Design
+  * RDD Applied to US Congressional Elections: The Setup
+  * **RDD Applied to US Congressional Elections: Results**
+  * RDD Applied to US Congressional Elections: Conclusions
 
 
