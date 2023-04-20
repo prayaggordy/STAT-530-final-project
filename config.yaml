@@ -17,3 +17,6 @@ analysis:
   lag_fns: [lag_any_candidates, 
             lag_same_dem, lag_same_dem_same_rep, lag_same_dem_diff_rep,
             lag_same_rep, lag_diff_dem_same_rep, lag_diff_dem_diff_rep]
+  colors:
+    dem: "#00AEF3"
+    rep: "#DE0100"
