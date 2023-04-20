@@ -40,12 +40,19 @@ calculate_dem_margin <- function(df,
     dplyr::mutate(dem_margin = share_democrat - share_highest_other)
 }
 
+remove_redistricting <- function(df,
+                                 remainder = config$data$elections$remove_remainder) {
+  df |>
+    dplyr::filter(year %% 10 != remainder)
+}
+
 get_elections <- function(fn = config$data$elections$fn,
                           raw = config$paths$raw,
                           proc = config$paths$proc) {
   df <- read_elections(fn = fn, raw = raw) |>
     apply_filters() |>
-    calculate_dem_margin()
+    calculate_dem_margin() |>
+    remove_redistricting()
   
   readr::write_csv(df, paste0(proc, fn))
   
