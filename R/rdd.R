@@ -52,10 +52,10 @@ covariate_rdd <- function(df) {
 backwards_rdd <- function(df, figs = config$paths$figures, dig = 3, cols = config$analysis$colors) {
   d <- lag_any_candidates(df)
   
-  mccrary_p <- rdd::DCdensity(d$dem_margin)
-  jpeg(paste0(figs, "backwards_rdd", "_mccrary_p_", round(mccrary_p, dig), ".jpeg"), width = 6, height = 6, units = "in", res = 300)
-  rdd::DCdensity(d$dem_margin)
-  dev.off()
+  # mccrary_p <- rdd::DCdensity(d$dem_margin)
+  # jpeg(paste0(figs, "backwards_rdd", "_mccrary_p_", round(mccrary_p, dig), ".jpeg"), width = 6, height = 6, units = "in", res = 300)
+  # rdd::DCdensity(d$dem_margin)
+  # dev.off()
   
   late <- round(rdd::RDestimate(prev_dem_margin ~ dem_margin, d)$est["LATE"], dig)
   
@@ -96,9 +96,9 @@ logistic <- function(df, cols = config$analysis$colors) {
                    family = "binomial")
   
   eps <- 0.001
-  (predict(fit_upper, newdata = data.frame(prev_dem_margin = -eps), type = "response") - 
-    predict(fit_lower, newdata = data.frame(prev_dem_margin = eps), type = "response")) |>
-    print()
+  # (predict(fit_upper, newdata = data.frame(prev_dem_margin = -eps), type = "response") - 
+  #   predict(fit_lower, newdata = data.frame(prev_dem_margin = eps), type = "response")) |>
+  #   print()
   
   d_lower |>
     dplyr::mutate(p = predict(fit_lower, newdata = d_lower, type = "response"),
@@ -140,9 +140,9 @@ logistic_backwards <- function(df, cols = config$analysis$colors) {
                    family = "binomial")
   
   eps <- 0.001
-  (predict(fit_upper, newdata = data.frame(dem_margin = -eps), type = "response") - 
-      predict(fit_lower, newdata = data.frame(dem_margin = eps), type = "response")) |>
-    print()
+  # (predict(fit_upper, newdata = data.frame(dem_margin = -eps), type = "response") - 
+  #     predict(fit_lower, newdata = data.frame(dem_margin = eps), type = "response")) |>
+  #   print()
   
   d_lower |>
     dplyr::mutate(p = predict(fit_lower, newdata = d_lower, type = "response"),
