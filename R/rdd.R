@@ -7,11 +7,11 @@ plot_density <- function(d, fn_full, dig = 3) {
   NULL
 }
 
-plot_rdd <- function(d, fn_full, 
+plot_rdd <- function(d, 
                      dig = 3, cols = config$analysis$colors) {
   late <- round(rdd::RDestimate(dem_margin ~ prev_dem_margin, d)$est["LATE"], dig)
   
-  p <- d |>
+  d |>
     dplyr::mutate(prev_winner = ifelse(prev_dem_margin > 0, "Democrat", "Other")) |>
     ggplot(aes(x = prev_dem_margin, y = dem_margin, color = prev_winner, group = prev_winner)) +
     geom_point(size = 0.5, alpha = 0.25) +
@@ -26,10 +26,6 @@ plot_rdd <- function(d, fn_full,
     scale_y_continuous(limits = c(-1, 1), breaks = seq(-1, 1, by = 0.25)) +
     geom_hline(yintercept = 0) +
     geom_vline(xintercept = 0)
-  
-  ggsave(paste0(fn_full, "_late_", late, ".jpeg"), p)
-  
-  NULL
 }
 
 simple_rdd <- function(df,
