@@ -59,7 +59,7 @@ backwards_rdd <- function(df, figs = config$paths$figures, dig = 3, cols = confi
   
   late <- round(rdd::RDestimate(prev_dem_margin ~ dem_margin, d)$est["LATE"], dig)
   
-  p <- d |>
+  d |>
     dplyr::mutate(x_winner = ifelse(dem_margin > 0, "Democrat", "Other")) |>
     ggplot(aes(x = dem_margin, y = prev_dem_margin, color = x_winner, group = x_winner)) +
     geom_point(size = 0.5, alpha = 0.25) +
@@ -74,10 +74,6 @@ backwards_rdd <- function(df, figs = config$paths$figures, dig = 3, cols = confi
     scale_y_continuous(limits = c(-1, 1), breaks = seq(-1, 1, by = 0.25)) +
     geom_hline(yintercept = 0) +
     geom_vline(xintercept = 0)
-  
-  ggsave(paste0(figs, "backwards_rdd" , "_late_", late, ".jpeg"), p)
-  
-  NULL
 }
 
 logistic <- function(df, cols = config$analysis$colors) {
