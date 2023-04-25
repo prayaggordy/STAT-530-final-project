@@ -71,4 +71,13 @@ Second, we assume that the only relevant pretreatment covariates of concern for 
 
 With these three pretreatment covariates chosen, we estimate the discontinuities in their conditional densities conditional on the $t-1$ Democratic election margin at the zero margin value using local linear regression and find that there are no statistically significant discontinuities in either three covariates’ densities. This result can also be expected just by visual inspection of the covariate value versus the $t-1$ Democratic election margin.
 
+```{r}
+#| fig-cap: Three pretreatment covariates versus $t-1$ Democratic vote margin.
+
+test_demos(DF)
+```
+
+With no empirical discontinuities in any of the densities under investigation discovered, we can safely assume that the continuity assumption holds in our idealized election model here and feel comfortable applying RDD to estimating effects of incumbency.
+
+
 
