@@ -44,7 +44,7 @@ decade_rdd <- function(df) {
         purrr::map(
           data,
           function(x) {
-            mccrary <- rdd::DCdensity(x$prev_dem_margin)
+            mccrary <- rdd::DCdensity(x$prev_dem_margin, plot = F)
             est <- rdd::RDestimate(dem_margin ~ prev_dem_margin, x)$est[1]
             se <- rdd::RDestimate(dem_margin ~ prev_dem_margin, x)$se[1]
             bw <- rdd::RDestimate(dem_margin ~ prev_dem_margin, x)$bw[1]
@@ -53,7 +53,8 @@ decade_rdd <- function(df) {
           }
         )
     ) |>
-    tidyr::unnest(res)
+    tidyr::unnest(res) |>
+    dplyr::select(Decade = decade, LATE = est)
 }
 
 region_rdd <- function(df,
@@ -67,7 +68,7 @@ region_rdd <- function(df,
         purrr::map(
           data,
           function(x) {
-            mccrary <- rdd::DCdensity(x$prev_dem_margin)
+            mccrary <- rdd::DCdensity(x$prev_dem_margin, plot = F)
             est <- rdd::RDestimate(dem_margin ~ prev_dem_margin, x)$est[1]
             se <- rdd::RDestimate(dem_margin ~ prev_dem_margin, x)$se[1]
             bw <- rdd::RDestimate(dem_margin ~ prev_dem_margin, x)$bw[1]
@@ -76,5 +77,6 @@ region_rdd <- function(df,
           }
         )
     ) |>
-    tidyr::unnest(res)
+    tidyr::unnest(res) |>
+    dplyr::select(Division, LATE = est)
 }
