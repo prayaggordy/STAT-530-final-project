@@ -1,0 +1,58 @@
+---
+title: "Regression Discontinuity Design to Measure Incumbency Advantage in US Congressional Elections"
+subtitle: "Final Project for STAT 530"
+author: "Tyler Bagwell and Prayag Gordy"
+date: "April 24, 2023"
+abstract: "The incumbency effect in U.S. elections is a subject of decades of political science research. Why is it, political scientists ask, that legislative and executive bodies with such low overall approval ratings have the vast majority of its members returning term after term? In this paper, we will use a regression discontinuity design to examine the effects of party incumbency in tightly contested congressional districts. Specifically, we examine the effect of the Democratic margin in an election on the Democratic margin in the following election. We found a local average treatment effect of 17.3 percentage points. Our results further support the literature claiming a large incumbency effect, though we show its strength may be decreasing."
+format: pdf
+toc: true
+number-sections: true
+execute:
+  echo: false
+---
+
+
+
+## Introduction
+
+Incumbents in the U.S. House of Representatives are reelected at astonishing rates. Since 1964, the reelection rate has never dropped below 85%, while the approval rating of the House as a whole has generally remained around 40%, dipping to 20% in recent years. Thus, many political scientists spend their careers researching the advantages of incumbency (Gelman and King, 1990).
+
+Many experts have criticized the apparently strong effects of incumbency. Congressmen can use government funds to visit areas of their district, meet with important political players, and send mail to constituents touting their achievements, all of which indirectly benefit their reelection campaign. Challengers enjoy none of these benefits.
+
+Previous research has found strong effects of incumbency. Candidates running for reelection routinely raise far more money. Further, they may be able to deter challengers simply by being an incumbent. Overall, Cummings found that in similar districts, incumbent congressmen are more likely to win elections than non-incumbent congressmen from the same party.
+
+In this paper, we will examine the incumbency effect using a sharp regression discontinuity design. In section 2, we will describe RDD and explain how it applies to the study of incumbency. Section 3 will list our results, and section 4 will explore our conclusions of the study.
+
+## Methods
+### Introduction to Regression Discontinuity Design
+
+A regression discontinuity design (RDD) is a natural quasi-experimental design for determining causal effect of a treatment that is assigned at a cutoff. There are many examples of such treatments across diverse areas of research, such as being prescribed a drug if a biomarker exceeds a certain threshold, joining an advanced class if a test score is high enough, and receiving welfare benefits for a low enough income.
+
+Generally, RDD attempts to estimate the local causal effect of treatment, $\tau(W = w_0)$, at $W=w_0$ on outcome $Y$ with (unobserved/observed) covariate(s) $\mathbf{X}$, where individual assignment is determined by value of $W_i$ through $D_i = \mathbb{I}\{W_i \geq w_0\}$ and where $D_i=1$ indicates the $i$'th individual received treatment. The validity of RDD on estimating the local average treatment effect (LATE) depends on the assumption that the conditional expectation of potential outcome (both treatment and control outcomes) at the threshold value $W_i=w_0$ can be well approximated from one side rather than from both sides across the assignment threshold. 
+
+If this continuity assumption holds, it indicates that individuals on both sides of the assignment threshold come from very similar populations in terms of the covariates $\mathbf{X}$ and the assigning variable $W$, such that the likelihood of individuals within this close proximity to the threshold eventually receiving treatment or remaining as a control observation is essentially random. It is this random assignment of the barely-controls and the barely-treated near the threshold that guarantees an unbiased estimation of the LATE. Additionally, our covariates $\mathbf{X}$ are necessarily pretreatment covariates, thus their values should be independent of treatment assignment. Specifically, there must be no manipulation around the cutoff; that is, an individual who is inches away from treatment must remain in the control group and may not be artificially lifted into the treatment group.
+
+In practice, it is impossible to determine if the continuity assumption holds for a particular experimental design unless the RDD practitioner has full knowledge of the conditional population densities of the covariates $\mathbf{X}$ with respect to the assigning variable $W$, i.e., $f(\mathbf{X}|W)$, for all covariates that are relevant to $Y$. In empirical RDD, the continuity assumption can be tested with the observed data by (1) testing for the lack of discontinuity in the density of the assignment variable $W$ at threshold $W=w_0$ (McCrary density test) and (2) testing for discontinuity in the first moment of the covariates $\mathbf{X}$ conditional on $W$ at $W=w_0$. This second test is usually performed by using local linear regressions in the proximity of the line $W=w_0$. In less rigorous language, the first test is meant to determine that the odds of treatment assignment of the barely-controls and the barely-treated are purely random in the proximity of the cutoff, while the second test is to determine if the pretreatment characteristics of barely-controls and the barely-treated are indeed very similar.
+
+The unbiased LATE on the outcome $Y$ at $W=w_0$ is itself calculated as the difference in the intercepts of two local linear regressions ($Y \sim W$) performed exclusively on either side of the cutoff $W=w_0$. Under the continuity assumption, the effects of covariates will not affect the value of the LATE calculated at $W=w_0$, thus, the covariates $\mathbf{X}$ do not need to be included in the local regression formulae in order to calculate the LATE $\tau(W=w_0)$. Analytically, the estimator for the average treatment effects is given by $$ \hat{\tau}_{\text{LLR}}(Y;W,K,b) = \hat{\alpha}_1 - \hat{\alpha}_0,$$ $$ (\hat{\alpha_0},\hat{\beta_0}) = \operatorname*{arg\,min}_{\alpha_0,\beta_0} \sum_{i=1}^n 1\{w_l < W_i < w_0\}\{Y_i-\alpha_0-\beta_0(W_i-w_0)\}^2K(\cdot),$$ $$(\hat{\alpha_1},\hat{\beta_1}) = \operatorname*{arg\,min}_{\alpha_1,\beta_1} \sum_{i=1}^n 1 \{w_0 < W_i < w_u\}\{Y_i-\alpha_1-\beta_1(W_i-w_0)\}^2K(\cdot),$$ where $K(\cdot)$ is the weighting or kernel function and $b$ is the choice of bandwidth that controls the weighting scheme in this local linear regression. In this study, we use the Imbens-Kalyanaraman optimal bandwidth formula to calculate the optimal bandwidths for local regression estimation and we used a triangular kernel for $K(\cdot)$.
+
+One key drawback of RDD is that it can only ever give us information of the LATE at $W=w_0$ only. The external validity of RDD to determine average treatment effects for values of $W$ not equal to or at least near $w_0$ should always be called into question.
+
+### Applying RDD to Election Outcomes and Incumbency
+
+The data used in this study came from two primary data sets housed by the Harvard Dataverse and the MIT Election Data and Science Lab. The first data set, _U.S. House 1976–2020 Elections_, is a collection of results of US Congressional House elections between 1976 and 2020 for all congressional districts. The primary variables used in this data set were _candidate_, _candidate party_, _candidate votes_, and _total votes for election_. The second data set, _Historical Congressional Legislation and District Demographics 1972-2014_, contains a subset of the pretreatment covariates per congressional district we used for this study, namely, _unemployment rate_, _race_, and _level of education_.
+
+The primary variable of interest for this study was _Democratic candidate vote margin_ in each election. Democratic vote margin was calculated as the difference in vote share of the Democratic candidate minus the vote share of the non-Democratic party candidate in the same election with the most votes. Unsurprisingly, for the vast majority of elections used in this study, the non-Democratic party candidate was usually a Republican. The vote share of a candidate is simply the ratio of votes obtained by a candidate versus the total amount of votes cast in the entire election for all candidates. Under this definition, the _Democratic candidate vote margin_ can take on values from $-1.0$ to $+1.0$, where a $-1.0$ vote margin indicates an election blowout by the non-Democratic candidate, a $0.0$ vote margin indicates a exact tie between the Democratic and non-Democratic candidates, and a $+1.0$ vote margin indicates an election blowout by the Democratic candidate.
+
+In order to avoid the effects of redistricting, we excluded all elections with years ending in "2," e.g., 1982, 1992, etc., since the U.S. Constitution mandates redistricting after the decennial census that occurs in every year ending in "0." We ignored elections in which no Democrats ran, and we excluded elections where the two candidates with the highest vote margins were both Democrats, which can occur in states with jungle primaries such as California.
+
+Regression discontinuity designs may be categorized as "sharp" or "fuzzy." Sharp designs require a hard cutoff: If observations are on the "treated" side of the line, they must receive treatment. A fuzzy design, on the other hand, adds some leeway. An observation may be on the "treated" side but decline treatment; a simple example may be a student who declines an offer to join an advanced class, even though they scored well enough on the entrance examination. In this study, we will use a sharp design. If a Democratic candidate’s margin is positive, they win the election and must take their seat, barring extremely rare circumstances such as death.
+
+## Results
+### Pre-RDD Validity Diagnostics
+
+Before applying RDD to the election data, we first report the results of the pre-RDD diagnostic tests described in the previous section to determine how the continuity assumption holds in our election context. 
+
+First, we test the continuity of the Democratic vote margin for all $t-1$ elections in our data set. The results of the McCrary density test on the Democratic vote margin at the zero margin cutoff indicates a continuous density on both sides of the cutoff value ($\alpha = 0.05$). A plot of the McCrary density test’s density estimation is provided below.
+
+
