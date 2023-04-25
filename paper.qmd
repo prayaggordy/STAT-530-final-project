@@ -9,9 +9,13 @@ toc: true
 number-sections: true
 execute:
   echo: false
+  message: false
+  warning: false
 ---
 
-
+```{r message=FALSE, warning=FALSE}
+source("main.R")
+```
 
 ## Introduction
 
@@ -54,5 +58,17 @@ Regression discontinuity designs may be categorized as "sharp" or "fuzzy." Sharp
 Before applying RDD to the election data, we first report the results of the pre-RDD diagnostic tests described in the previous section to determine how the continuity assumption holds in our election context. 
 
 First, we test the continuity of the Democratic vote margin for all $t-1$ elections in our data set. The results of the McCrary density test on the Democratic vote margin at the zero margin cutoff indicates a continuous density on both sides of the cutoff value ($\alpha = 0.05$). A plot of the McCrary density test’s density estimation is provided below.
+
+```{r}
+#| fig-cap: McCrary density test and estimation for all $t-1$ Democratic vote margins.
+
+lag_any_candidates(DF) |>
+  dplyr::pull(prev_dem_margin) |>
+  rdd::DCdensity()
+```
+
+Second, we assume that the only relevant pretreatment covariates of concern for congressional district-level election outcomes are rates of unemployment, racial demographics, and level of education of a district's citizens. Undoubtedly, this is a gross oversimplification. The number of variables that affect the outcomes of close elections are innumerous, including campaign spending to the election day weather and everything in between, but collecting and analyzing all these data would be out of scope for this class project. Therefore, for the purposes of this small study and its given time constraints, we only consider the three aforementioned covariates. 
+
+With these three pretreatment covariates chosen, we estimate the discontinuities in their conditional densities conditional on the $t-1$ Democratic election margin at the zero margin value using local linear regression and find that there are no statistically significant discontinuities in either three covariates’ densities. This result can also be expected just by visual inspection of the covariate value versus the $t-1$ Democratic election margin.
 
 
