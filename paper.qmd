@@ -11,6 +11,7 @@ execute:
   echo: false
   message: false
   warning: false
+  results: false
 ---
 
 ```{r message=FALSE, warning=FALSE}
@@ -62,9 +63,7 @@ First, we test the continuity of the Democratic vote margin for all $t-1$ electi
 ```{r}
 #| fig-cap: McCrary density test and estimation for all $t-1$ Democratic vote margins.
 
-lag_any_candidates(DF) |>
-  dplyr::pull(prev_dem_margin) |>
-  rdd::DCdensity()
+invisible(rdd::DCdensity(lag_any_candidates(DF)$prev_dem_margin))
 ```
 
 Second, we assume that the only relevant pretreatment covariates of concern for congressional district-level election outcomes are rates of unemployment, racial demographics, and level of education of a district's citizens. Undoubtedly, this is a gross oversimplification. The number of variables that affect the outcomes of close elections are innumerous, including campaign spending to the election day weather and everything in between, but collecting and analyzing all these data would be out of scope for this class project. Therefore, for the purposes of this small study and its given time constraints, we only consider the three aforementioned covariates. 
@@ -79,5 +78,89 @@ test_demos(DF)
 
 With no empirical discontinuities in any of the densities under investigation discovered, we can safely assume that the continuity assumption holds in our idealized election model here and feel comfortable applying RDD to estimating effects of incumbency.
 
+### Basic RDD Results
 
+With diagnostics assessed, we ran our first RDD analyses. After applying our filters, we had 4,800 observations. We used the `rdd` package in R to conduct our analyses.
 
+We found a clear discontinuity from a slight Democratic loss to a slight Democratic victory. A district that votes barely against the Democrat in election $t-1$ tends to shift further away from Democrats in election $t$, while districts that only marginally elect a Democrat in election $t-1$ move toward Democrats in election $t$. This is a clear effect of the treatment — in this case, electing a Democrat — on the Democratic margin in the next election.
+
+```{r}
+#| fig-cap: RDD analysis of 4,800 elections from 1976 through 2020. The local average treatment effect is 0.173.
+
+lag_any_candidates(DF) |>
+  plot_rdd()
+```
+
+We also conducted logistic regressions as part of our analyses. Instead of examining the Democratic margin in election $t$, we consider only the final result: a Democratic victory or loss. These logistic regressions support the narrative from the RDD analysis, but in a simpler setting.
+
+```{r}
+#| fig-cap: Separate logistic regressions on either side of the cutoff also show a clear discontinuity, with a 0.551 change in the probability of a Democrat winning election $t$.
+
+logistic(DF)
+```
+
+To further separate potential associative relationships from causal relationships, we reversed our analyses. Clearly, an election in year $t$ cannot have an effect on an election in year $t-1$ because of the temporal structure in the data. Our empirical results align with this theory, as there is practically no discontinuity in the RDD or logistic analyses and thus no evidence of retro-causality.
+
+```{r}
+#| fig-cap: An RDD applied in reverse — the effect of the Democratic margin in election $t$ on election $t-1$ — shows no discontinuities.
+
+backwards_rdd(DF)
+```
+
+```{r}
+#| fig-cap: A logistic regression applied in reverse also shows no discontinuities.
+
+logistic_backwards(DF)
+```
+
+### Discarded Analyses
+
+Up to this point, our analyses have examined a slightly weaker form of incumbency: party incumbency. That is, we looked at the Democratic margin without considering the candidates themselves. One Democrat may run in election $t-1$ but another in election $t$, and we would treat this identically to a situation in which the same Democrat runs in elections $t-1$ and $t$. We sought to narrow our analysis to eight cases:
+
+- the same Democrat runs in elections $t-1$ and $t$, regardless of the best-performing non-Democrat;
+- a different Democrat runs in elections $t-1$ and $t$, regardless of the non-Democrat;
+- the same Democrat runs in elections $t-1$ and $t$ against a different non-Democrat;
+- the same Democrat runs in elections $t-1$ and $t$ against the same non-Democrat;
+- the same non-Democrat runs in elections $t-1$ and $t$, regardless of the Democrat;
+- a different non-Democrat runs in elections $t-1$ and $t$, regardless of the Democrat;
+- the same non-Democrat runs in elections $t-1$ and $t$ against a different Democrat; and
+- the same non-Democrat runs in elections $t-1$ and $t$ against the same Democrat.
+
+However, these sub-groups fail to meet the assumptions required for RDD. This may be because of who runs again. If a Democratic candidate loses by a slim margin, they are far more likely to step away from politics than a Democrat who barely wins, even though the candidates and their districts may be statistically similar. We empirically do not see continuity, which has a theoretical justification.
+
+```{r}
+#| fig-cap: Density plots for the first four sub-groups show violations in the continuity assumption.
+#| fig-height: 6
+
+par(mfrow = c(2, 2))
+invisible(rdd::DCdensity(lag_same_dem(DF)$prev_dem_margin) )
+invisible(rdd::DCdensity(lag_diff_dem(DF)$prev_dem_margin))
+invisible(rdd::DCdensity(lag_same_dem_diff_rep(DF)$prev_dem_margin) )
+invisible(rdd::DCdensity(lag_same_dem_same_rep(DF)$prev_dem_margin))
+```
+
+### Additional Results
+
+We did manage to successfully divide our population into some relevant sub groups. First, we divided the elections by decade. As the table shows, the effect of a Democrat winning a close election on the Democratic margin in the next election has decreased over time.
+
+```{r}
+#| tbl-cap: The LATE has decreased over time.
+
+decade_rdd(DF) |>
+  knitr::kable()
+```
+
+Then, we considered the region of the congressional district, as defined by the U.S. Census Bureau. Many regions have similar LATE estimates. The Pacific region, comprising Alaska, Washington, Oregon, California, and Hawaii, has the lowest estimate. The West South Central, containing Oklahoma, Texas, Arkansas, and Louisiana, has the second highest LATE estimate, while New England — Maine, New Hampshire, Vermont, Massachusetts, Connecticut, and Rhode Island — has the highest at 0.269.
+
+```{r}
+#| tbl-cap: Most regions see similar LATE estimates, though New England may have a particularly strong incumbency effect.
+
+region_rdd(DF) |>
+  knitr::kable()
+```
+
+## Conclusions
+
+Our analyses support previous literature showing a strong incumbency effect. Districts that are otherwise similar, as our covariate analysis showed, may have vastly different electoral futures come down to just a handful of votes. These results show the importance of national parties investing in close congressional elections, as a marginal amount of votes in one election can affect following elections.
+
+There are many analyses researchers can conduct to further the study of incumbency advantages. Demographic data on the candidates themselves can be considered to explore racial and other sorts of discrimination in politics. Scientists can examine when a losing candidate runs again: Do they take a few cycles to recover from a grueling and heartbreaking campaign? Do they never re-enter politics? Does it depend on how close they were? Finally, scientists can reproduce these analyses at other levels — the U.S. Senate, state senates, state houses, and local offices.
