@@ -1,6 +1,9 @@
 ---
 title: "Regression Discontinuity Design to Measure Incumbency Advantage in US Congressional Elections"
+subtitle: "Final Project for STAT 530"
 author: "Tyler Bagwell and Prayag Gordy"
+date: "April 24, 2023"
+abstract: "The incumbency effect in U.S. elections is a subject of decades of political science research. Why is it, scientists ask, that legislative and executive bodies with such low overall approval ratings have the vast majority of its members returning term after term? In this paper, we will use a regression discontinuity design to examine the effects of party incumbency in tightly contested congressional districts. Specifically, we examine the effect of the Democratic margin in an election on the Democratic margin in the following election. We found a local average treatment effect of 17.3 percentage points. Our results further support the literature claiming a large incumbency effect, though we show its strength may be decreasing."
 format: pdf
 editor: visual
 ---
