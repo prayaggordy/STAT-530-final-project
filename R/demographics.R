@@ -32,9 +32,9 @@ get_demos <- function(fn = config$data$demographics$fn,
 
 test_demos <- function(df, cols = config$analysis$colors) {
   lag_any_candidates(df) |>
-    dplyr::select(year, full_district, prev_dem_margin, white = prcntWhiteAll, 
-                  income = meanIncome, unemp = prcntUnemp) |>
-    tidyr::pivot_longer(cols = c(white, income, unemp),
+    dplyr::select(year, full_district, prev_dem_margin, White = prcntWhiteAll, 
+                  Income = meanIncome, Unemployment = prcntUnemp) |>
+    tidyr::pivot_longer(cols = c(White, Income, Unemployment),
                         names_to = "demo") |>
     dplyr::filter(!is.na(value)) |>
     dplyr::mutate(Winner = ifelse(prev_dem_margin > 0, "Democrat", "Other")) |>
