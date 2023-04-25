@@ -1,0 +1,402 @@
+---
+title: "Regression Discontinuity Design to Measure Incumbency Advantage in US Congressional Elections"
+subtitle: "STAT530 Final Project"
+author: "Prayag & Tyler"
+date: "4/21/2023"
+format: beamer
+editor: visual
+header-includes:
+  - \usepackage{amssymb}
+---
+
+## Presentation Outline
+
+  * Introduction to Regression Discontinuity Design
+  * RDD Applied to US Congressional Elections: The Setup
+  * RDD Applied to US Congressional Elections: Results
+  * RDD Applied to US Congressional Elections: Conclusions
+  
+## Presentation Outline
+
+  * Introduction to Regression Discontinuity Design
+  * **RDD Applied to US Congressional Elections: The Setup**
+  * RDD Applied to US Congressional Elections: Results
+  * RDD Applied to US Congressional Elections: Conclusions
+
+## Regression Discontinuity Design
+
+**Introduction**: Regression discontinuity design (RDD) is a quasi-experimental pretest-posttest design that aims to determine the causal effects of interventions by assigning a cutoff or threshold above or below which an intervention is assigned. 
+
+## Regression Discontinuity Design
+
+**Goal**: Try to estimate the causal effect of intervention/treatment, $\tau(W=w_0)$, at $W=w_0$ on $Y$ with (unobserved/observed) covariate $X$, where individual assignment is determined by value of $W_i$ through $D_i=1\{W_i\ge w_0\}$.
+
+```{r echo=FALSE, fig.show='asis', fig.width=4.50, fig.height=3.0, fig.align='center', cache=TRUE}
+N <- 10000
+cc <- 3.0
+X <- rnorm(n=N, mean=0, sd=1.0)
+W <- 4*rbeta(n=N, shape1=3.5, shape2=2) + X
+D <- ifelse(W>cc, 1, 0)
+DD <- ifelse(D==1,0,1)
+
+a=10.0; tau=10.0; b=2.5; c=0.0
+tau_func <- tau*(0.5+0.4*W)
+Y <- a + tau_func*D + b*X + c*X*D + 1*W**2 + rnorm(n=N, mean=0, sd=0.25)
+YY <- a + tau_func*DD + b*X + c*X*DD + 1*W**2 + rnorm(n=N, mean=0, sd=0.25)
+
+##
+par(cex.axis=0.75, cex.main=0.75, cex.lab=0.75)
+plot(W,Y, cex=0.1, col=ifelse(D==1, "steelblue", "tomato"))
+abline(v=cc, lwd=1.5)
+axis(1, at=cc, labels="w_0")
+legend("topleft", legend=c("Obs. w/ treatment", "Obs. w/o treatment"), 
+       col=c("steelblue","tomato"), pch=c(1,1,2), cex=0.60)
+par(cex.axis=0.75, cex.main=0.75)
+```
+
+
+## Regression Discontinuity Design
+
+**Continuity Assumption**: Assume that the conditional expectation of potential outcome at the threshold $W=w_0$ can be approximated well from one side rather than from both sides, i.e., 
+$$ \mathbb{E}(Y_i^1|W_i=w_0) = \lim_{w\downarrow w_0} \mathbb{E}(Y_i^1|W_i=w),$$
+$$ \mathbb{E}(Y_i^0|W_i=w_0) = \lim_{w\uparrow w_0} \mathbb{E}(Y_i^0|W_i=w).$$
+
+```{r echo=FALSE, fig.show='asis', fig.width=4.50, fig.height=3.0, fig.align='center', cache=TRUE}
+par(cex.axis=0.75, cex.main=0.75, cex.lab=0.75)
+plot(W,Y, cex=0.1, col=ifelse(D==1, "steelblue", "tomato"), ylab="Y", xlab="W")
+points(W,YY,col='gray', cex=0.1, pch=2)
+abline(v=cc, lwd=1.5)
+axis(1, at=cc, labels="w_0")
+legend("topleft", legend=c("Obs. w/ treatment", "Obs. w/o treatment", "Counterfactuals"), 
+       col=c("steelblue","tomato","gray"), pch=c(1,1,2), cex=0.60)
+arrows(4.5,56,3.1,39,lwd=1.5)
+arrows(1.5,10,2.9,19,lwd=1.5)
+
+```
+
+
+## Regression Discontinuity Design
+
+Therefore, under the continuity of potential outcomes assumption, we can identify the ATE, $\tau(w_0)$, at the threshold $W=w_0$ as
+$$
+\begin{aligned}
+    \text{ATE} &= \mathbb{E}(Y_i^1 - Y_i^0|W_i=w_0) \\
+               &= \lim_{w\downarrow w_0} \mathbb{E}(Y_i^1|W_i=w) - \lim_{w\uparrow w_0} \mathbb{E}(Y_i^0|W_i=w)
+\end{aligned}
+$$
+```{r echo=FALSE, fig.show='asis', fig.width=4.50, fig.height=3.0, fig.align='center', cache=TRUE}
+par(cex.axis=0.75, cex.main=0.75, cex.lab=0.75)
+plot(W,Y, cex=0.1, col=ifelse(D==1, "steelblue", "tomato"), ylab="Y", xlab="W")
+points(W,YY,col='gray', cex=0.1, pch=2)
+abline(v=cc, lwd=1.5)
+axis(1, at=cc, labels="w_0")
+legend("topleft", legend=c("Obs. w/ treatment", "Obs. w/o treatment", "Counterfactuals"), 
+       col=c("steelblue","tomato","gray"), pch=c(1,1,2), cex=0.60)
+arrows(4.5,56,3.1,39,lwd=1.5)
+arrows(1.5,10,2.9,19,lwd=1.5)
+
+```
+
+
+## Regression Discontinuity Design
+
+A **violation** of the continuity assumption: the barely-controls and the barely-treated come from very different populations, thus our RRD is unknowingly invalidated, since we will overestimate $\tau(w_0)$.
+
+Thus, merely plotting observed $Y$ versus $W$, we have no way of knowing if or if not the continuity assumption holds at the threshold $W=w_0$.
+
+```{r echo=FALSE, fig.show='asis', fig.width=4.50, fig.height=3.0, fig.align='center', cache=TRUE}
+N <- 10000
+cc <- 3.0
+W <- 4*rbeta(n=N, shape1=3.5, shape2=2) + X - 0.5
+D <- ifelse(W>cc, 1, 0)
+X <- rnorm(n=N, mean=0, sd=0.5) + D*rnorm(n=N, mean=2.5, sd=0.5)
+DD <- ifelse(D==1,0,1)
+
+a=10.0; tau=10.0; b=2.5; c=0.0
+tau_func <- tau*(0.5+0.4*W) 
+Y <- a + tau_func*D + b*X + c*X*D + 1*W**2 + rnorm(n=N, mean=0, sd=0.25)
+YY <- a + tau_func*DD + b*X + c*X*DD + 1*W**2 + rnorm(n=N, mean=0, sd=0.25)
+
+##
+par(cex.axis=0.75, cex.main=0.75, cex.lab=0.75)
+plot(W,Y, cex=0.1, col=ifelse(D==1, "steelblue", "tomato"), ylim=c(0,max(Y)))
+points(W,YY,col='gray', cex=0.1, pch=2)
+abline(v=cc, lwd=1.5)
+axis(1, at=cc, labels="w_0")
+legend("topleft", legend=c("Obs. w/ treatment", "Obs. w/o treatment", "Counterfactuals"), 
+       col=c("steelblue","tomato","gray"), pch=c(1,1,2), cex=0.60)
+
+```
+
+
+## Regression Discontinuity Design
+
+We empirically can test for validity of the continuity assumption using our observed data:
+
+  * Lack of discontinuity in desnity of assignment variable $W$ at threshold $W=w_0$ (McCrary density test).
+  * Lack of discontinuity in pretreatment covariates conditional density $X|W$ at the threshold $W=w_0$ then represents empirical evidence for the continuity of expected potential outcomes so long as we test all relevant pretreatment covariates, i.e., $f(X=x|W=w)$ must be continuous in $w$ at $w=w_0$ for all $x \in X$. (Regress X on W at threshold.)
+
+
+## Regression Discontinuity Design
+
+* McCrary density test for density of assignment variable $W$ for our two sets of data:
+
+```{r echo=FALSE, fig.show='asis', fig.width=5.00, fig.height=3.0, fig.align='center', cache=TRUE}
+library(ggplot2)
+library(gridExtra)
+library(rdd)
+cc <- 3.0
+X <- rnorm(n=N, mean=0, sd=1.0)
+W <- 4*rbeta(n=N, shape1=3.5, shape2=2) + X
+D <- ifelse(W>cc, 1, 0)
+DD <- ifelse(D==1,0,1)
+
+a=10.0; tau=10.0; b=2.5; c=0.0
+tau_func <- tau*(0.5+0.4*W)
+Y <- a + tau_func*D + b*X + c*X*D + 1*W**2 + rnorm(n=N, mean=0, sd=0.25)
+YY <- a + tau_func*DD + b*X + c*X*DD + 1*W**2 + rnorm(n=N, mean=0, sd=0.25)
+
+par(mfrow=c(1,2))
+DCdensity(W, c=cc)
+abline(v=cc)
+
+
+N <- 10000
+cc <- 3.0
+X <- rnorm(n=N, mean=0, sd=1.0)
+W <- 4*rbeta(n=N, shape1=3.5, shape2=2) + X
+D <- ifelse(W>cc, 1, 0)
+DD <- ifelse(D==1,0,1)
+
+a=10.0; tau=10.0; b=2.5; c=0.0
+tau_func <- tau*(0.5+0.4*W)
+Y <- a + tau_func*D + b*X + c*X*D + 1*W**2 + rnorm(n=N, mean=0, sd=0.25)
+YY <- a + tau_func*DD + b*X + c*X*DD + 1*W**2 + rnorm(n=N, mean=0, sd=0.25)
+
+DCdensity(W, c=cc)
+abline(v=cc)
+```
+
+## Regression Discontinuity Design
+
+* Check for empirical discontinuity in covariate $X$'s density conditional on the assignment variable $W$ at the threshold using local linear regression for both data sets:
+
+```{r echo=FALSE, fig.show='asis', fig.width=4.50, fig.height=3.0, fig.align='center', cache=TRUE}
+
+N <- 10000
+cc <- 3.0
+X <- rnorm(n=N, mean=0, sd=1.0)
+W <- 4*rbeta(n=N, shape1=3.5, shape2=2) + X
+D <- ifelse(W>cc, 1, 0)
+DD <- ifelse(D==1,0,1)
+
+a=10.0; tau=10.0; b=2.5; c=0.0
+tau_func <- tau*(0.5+0.4*W)
+Y <- a + tau_func*D + b*X + c*X*D + 1*W**2 + rnorm(n=N, mean=0, sd=0.25)
+
+dcc <- 0.45
+dataSIM <- data.frame(W=W, X=X, D=D, Y=Y)
+data_dWm <- subset(dataSIM, W<cc & W>cc-dcc)
+data_dWp <- subset(dataSIM, W>cc & W<cc+dcc)
+
+lm.out_p <- lm(X ~ W, data=data_dWp)
+lm.out_m <- lm(X ~ W, data=data_dWm)
+ww_p <- data.frame(W=seq(min(data_dWp$W),max(dataSIM$W),length.out=100))
+ww_m <- data.frame(W=seq(min(dataSIM$W),max(data_dWm$W),length.out=100))
+xx_p <- predict(lm.out_p, newdata=ww_p, interval="confidence", level = 0.95)
+xx_m <- predict(lm.out_m, newdata=ww_m, interval="confidence", level = 0.95)
+
+p1 <- ggplot() + 
+  geom_jitter(data=dataSIM, aes(x=W, y=X), color= "gray",shape=19) + 
+  geom_smooth(data=data_dWm, aes(W,X),color= "darkblue",fill='blue',method="lm",se=TRUE) +
+  geom_smooth(data=data_dWp, aes(W,X),color = "darkred",fill="red",method="lm",se=TRUE) + 
+  labs(title="", x="W", y="X") + 
+  geom_vline(xintercept=cc) + 
+  geom_vline(xintercept=cc-dcc,col='purple', lty=2) + 
+  geom_vline(xintercept=cc+dcc,col='purple', lty=2)
+
+#
+N <- 10000
+cc <- 3.0
+W <- 4*rbeta(n=N, shape1=3.5, shape2=2) + X
+D <- ifelse(W>cc, 1, 0)
+X <- rnorm(n=N, mean=0, sd=0.5) + D*rnorm(n=N, mean=2.0, sd=0.5)
+DD <- ifelse(D==1,0,1)
+
+a=10.0; tau=10.0; b=2.5; c=0.0
+tau_func <- tau*(0.5+0.4*W) 
+Y <- a + tau_func*D + b*X + c*X*D + 1*W**2 + rnorm(n=N, mean=0, sd=0.25)
+
+dcc <- 0.45
+dataSIM <- data.frame(W=W, X=X, D=D, Y=Y)
+data_dWm <- subset(dataSIM, W<cc & W>cc-dcc)
+data_dWp <- subset(dataSIM, W>cc & W<cc+dcc)
+
+lm.out_p <- lm(X ~ W, data=data_dWp)
+lm.out_m <- lm(X ~ W, data=data_dWm)
+ww_p <- data.frame(W=seq(min(data_dWp$W),max(dataSIM$W),length.out=100))
+ww_m <- data.frame(W=seq(min(dataSIM$W),max(data_dWm$W),length.out=100))
+xx_p <- predict(lm.out_p, newdata=ww_p, interval="confidence", level = 0.95)
+xx_m <- predict(lm.out_m, newdata=ww_m, interval="confidence", level = 0.95)
+
+p2 <- ggplot() + 
+  geom_jitter(data=dataSIM, aes(x=W, y=X), color= "gray",shape=19) + 
+  geom_smooth(data=data_dWm, aes(W,X),color= "darkblue",fill='blue',method="lm",se=TRUE) +
+  geom_smooth(data=data_dWp, aes(W,X),color = "darkred",fill="red",method="lm",se=TRUE) + 
+  labs(title="", x="W", y="X") + 
+  geom_vline(xintercept=cc) + 
+  geom_vline(xintercept=cc-dcc,col='purple', lty=2) + 
+  geom_vline(xintercept=cc+dcc,col='purple', lty=2)
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+## Regression Discontinuity Design
+
+* Both data sets passed the McCrary test, data set 2 failed the test for conditional density continuity at the threshold, thus, blind RDD is not valid for data set 2, unless you incorporate the covariate in your model (but there are caveats to adding covariates, see Calonico et al., 2018).
+* **Takeaway**: RDD will produce unbiased causal estimands of intervention at the threshold, $\tau(w_0)$, without taking into account the covariates but it requires our continuity assumption for ALL relevant covariates.
+
+```{r echo=FALSE, fig.show='hide', fig.width=3.75, fig.height=3.0, fig.align='center', cache=TRUE}
+library(rdrobust)
+nn <- 100
+vals1 <- c()
+for (i in 1:nn){
+  N <- 1000
+  cc <- 3.0
+  X <- rnorm(n=N, mean=0, sd=1.0)
+  W <- 4*rbeta(n=N, shape1=3.5, shape2=2) + X
+  D <- ifelse(W>cc, 1, 0)
+  DD <- ifelse(D==1,0,1)
+  
+  a=10.0; tau=10.0; b=2.5; c=0.0
+  tau_func <- tau*(0.5+0.4*W)
+  Y <- a + tau_func*D + b*X + c*X*D + 1*W**2 + rnorm(n=N, mean=0, sd=0.25)
+  
+  p <- rdrobust(y=Y, x=W, c=cc, p=1, fuzzy=NULL, deriv = NULL, kernel="triangular")
+  vals1 <- append(vals1, p$Estimate[1])
+}
+
+Summary<-(boxplot(vals1)$stats)
+colnames(Summary)<-c("Data Set 1")
+rownames(Summary)<-c("Min","First Quartile","Median","Third Quartile","Maximum")
+
+nn <- 100
+vals2 <- c()
+for (i in 1:nn){
+  N <- 1000
+  cc <- 3.0
+  W <- 4*rbeta(n=N, shape1=3.5, shape2=2) + X
+  D <- ifelse(W>cc, 1, 0)
+  X <- rnorm(n=N, mean=0, sd=0.5) + D*rnorm(n=N, mean=2.0, sd=0.5)
+  DD <- ifelse(D==1,0,1)
+  
+  a=10.0; tau=10.0; b=2.5; c=0.0
+  tau_func <- tau*(0.5+0.4*W) 
+  Y <- a + tau_func*D + b*X + c*X*D + 1*W**2 + rnorm(n=N, mean=0, sd=0.25)
+  
+  p <- rdrobust(y=Y, x=W, c=cc, p=1, fuzzy=NULL, deriv = NULL, kernel="triangular")
+  vals2 <- append(vals2, p$Estimate[1])
+}
+
+Summary2<-(boxplot(vals2)$stats)
+colnames(Summary2)<-c("Data Set 2")
+rownames(Summary2)<-c("Min","First Quartile","Median","Third Quartile","Maximum")
+
+Summary <- cbind(Summary,Summary2)
+
+boxplot(Summary)
+abline(h=17,col='blue', lwd=1.5)
+axis(2, at=cc, labels="true tao", col='blue')
+```
+
+```{r echo=FALSE, fig.show='asis', fig.width=3.75, fig.height=3.0, fig.align='center', cache=TRUE}
+boxplot(Summary)
+abline(h=17,col='blue', lwd=1.5)
+axis(2, at=cc, labels="true tao", col='blue')
+legend("topleft", legend=c("True tau"), lty=1, col="blue", lwd=1.5, cex=0.6)
+```
+
+
+## Regression Discontinuity Design
+
+The estimator for the casual estimated at the assignment threshold $W=w_0$ is defined as
+$$ \hat{\tau}_{\text{LLR}}(Y;W,K,b) = \hat{\alpha}_1 - \hat{\alpha}_0$$
+$$ (\hat{\alpha_0},\hat{\beta_0}) = \operatorname*{arg\,min}_{\alpha_0,\beta_0} \sum_{i=1}^n 1\{w_l < W_i < w_0\}\{Y_i-\alpha_0-\beta_0(W_i-w_0)\}^2K(\cdot)$$
+$$(\hat{\alpha_1},\hat{\beta_1}) = \operatorname*{arg\,min}_{\alpha_1,\beta_1} \sum_{i=1}^n 1 \{w_0 < W_i < w_u\}\{Y_i-\alpha_1-\beta_1(W_i-w_0)\}^2K(\cdot)$$
+where $K(\cdot)$ is the weighting or kernel function and $b$ is the choice of bandwidth that controls the weighting scheme in this local linear regression. 
+
+We use the Imbens-Kalyanaraman optimal bandwidth formula to calculate the optimal bandwidths used in our local regression estimation.
+
+
+## Presentation Outline
+
+  * Introduction to Regression Discontinuity Design
+  * **RDD Applied to US Congressional Elections: The Setup**
+  * RDD Applied to US Congressional Elections: Results
+  * RDD Applied to US Congressional Elections: Conclusions
+  
+
+## RRD Applied to US Congressional Elections: The Setup
+
+Project Motivations:
+
+  * One of the most striking facts of congressional politics in the United States is the consistently high rate of electoral success of incumbents, and the electoral advantage of incumbency is one of the most studied aspects of research on elections to the U.S. House (Gelman and King, 1990).
+  * The overwhelming success of House incumbents draws public attention whenever concerns arise that Representatives are using the privileges and resources of office to gain an ‘‘unfair’’ advantage over potential challengers.
+  * Def'n: The **incumbent** is the current holder of an office or position, usually in relation to an election.
+
+      
+## RRD Applied to US Congressional Elections: The Setup
+
+Data Sources: Harvard Dataverse and MIT Election Data + Science Lab
+
+  * U.S. House 1976–2020 Elections (Data set 1)
+      * MIT Election Data and Science Lab, 2017, "U.S. House 1976–2020"
+  * Historical Congressional Legislation and District Demographics 1972-2014 (Data set 2)
+      * Foster-Molina, Ella, 2017, "Historical Congressional Legislation and District Demographics 1972-2014"
+
+![](HarvardDataverseImage.png){width=1.5in  fig-align="center"}
+
+## RRD Applied to US Congressional Elections: The Setup
+
+Observed variables and covariates after data wrangling:
+
+| Data Set 1           | Data Set 2    |
+| -------------------- | ------------- |
+| Year                 | Year          |
+| State                | State         |
+| District             | District      |
+| **Dem.* Vote Margin** | Unemployment | 
+| Candidate            | Race          |
+|                      | Education     |
+
+**Dem. Vote Margin** = (Dem. Vote Share) - (Greatest Non-Dem. Vote Share) 
+
+*Dem. = Democrat (Party)
+
+
+## RRD Applied to US Congressional Elections: The Setup
+
+![2022 Congressional Districts and Partisan Lean](CongressionalDistrictsImage.png){width=3.5in  fig-align="center"}
+
+## Presentation Outline
+
+  * Introduction to Regression Discontinuity Design
+  * RDD Applied to US Congressional Elections: The Setup
+  * **RDD Applied to US Congressional Elections: Results**
+  * RDD Applied to US Congressional Elections: Conclusions
+
+
+
+
+
+
+## Sources:
+
+  1. Lee, David S.; Randomized experiments from non-random selection in U.S. House elections, Journal of Econometrics 142 (2008) 675–697
+  2. de la Cuesta, Brandon and Imai, Kosuke; Misunderstandings About the Regression Discontinuity Design in the Study of Close Elections, Annu. Rev. Polit. Sci. 2016. 19:375–96
+  3. Calonico et al.; Regression Discontinuity Designs Using Covariates; The Review of Economics and Statistics, 2019, 101(3): 442–451
+  4. McCrary, Justin; Manipulation of the running variable in the regression discontinuity design: A density test; Journal of Econometrics 142 (2008) 698–714
+
+
+## Audience Discussion and Questions
+
